@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pc_cloud/utils/HttpUtils.dart';
 
 void main() => runApp(MyApp());
 
@@ -46,7 +50,29 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void _incrementCounter() async {
+
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    FormData formData = new FormData.from({
+      "name": "wendux",
+      "file": new UploadFileInfo(image, "upload.txt"),
+      //支持直接上传字节数组 (List<int>) ，方便直接上传内存中的内容
+//      "file2":
+//          new UploadFileInfo.fromBytes(utf8.encode("hello world"), "word.txt"),
+      // 支持文件数组上传
+//      "files": [
+//        new UploadFileInfo(new File("./example/upload.txt"), "upload.txt"),
+//        new UploadFileInfo(new File("./example/upload.txt"), "upload.txt")
+//      ]
+    });
+
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -54,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      HttpUtils.request('/fileUpload', method: 'POST', data: formData);
     });
   }
 
