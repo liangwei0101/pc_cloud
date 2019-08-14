@@ -20,7 +20,7 @@ class HttpUtils {
   /// default options
   static const String API_PREFIX = 'http://192.168.0.108:8080';
   static const String URL = '/graphql';
-  static const int CONNECT_TIMEOUT = 10000;
+  static const int CONNECT_TIMEOUT = 100000;
   static const int RECEIVE_TIMEOUT = 30000;
 
   /// http request methods

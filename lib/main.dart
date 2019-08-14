@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pc_cloud/utils/HttpUtils.dart';
 
 void main() => runApp(MyApp());
@@ -57,20 +57,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _incrementCounter() async {
+    Map<String, String> filesPaths;
+    filesPaths = await FilePicker.getMultiFilePath(
+        type: FileType.IMAGE); // will let you pick multiple image files at once
+//    var file = await FilePicker.getFilePath(type: FileType.IMAGE);
 
-    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    List<UploadFileInfo> uploadFileInfoList = new List();
+
+    filesPaths.forEach((String key, String value) {
+      UploadFileInfo uploadFile = new UploadFileInfo(new File(value), key);
+      uploadFileInfoList.add(uploadFile);
+    });
 
     FormData formData = new FormData.from({
-      "name": "wendux",
-      "file": new UploadFileInfo(image, "upload.txt"),
-      //支持直接上传字节数组 (List<int>) ，方便直接上传内存中的内容
-//      "file2":
-//          new UploadFileInfo.fromBytes(utf8.encode("hello world"), "word.txt"),
-      // 支持文件数组上传
-//      "files": [
-//        new UploadFileInfo(new File("./example/upload.txt"), "upload.txt"),
-//        new UploadFileInfo(new File("./example/upload.txt"), "upload.txt")
-//      ]
+      "files": uploadFileInfoList
     });
 
     setState(() {
