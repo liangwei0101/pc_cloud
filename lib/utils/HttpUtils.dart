@@ -30,6 +30,27 @@ class HttpUtils {
   static const String PATCH = 'patch';
   static const String DELETE = 'delete';
 
+  static Future<dynamic> uploadFile(String url, {data, callback}) async {
+    var result;
+    data = data ?? {};
+    callback= callback?? {};
+
+    var dio = createInstance();
+
+    try {
+      Response response = await dio.request(url,
+          data: data,
+          options: new Options(method: 'POST'),
+          onSendProgress: callback);
+      result = response.data;
+    } on DioError catch (e) {
+      print('请求出错：' + e.toString());
+      throw e;
+    }
+
+    return result;
+  }
+
   // 基于dio封装的http请求
   static Future<dynamic> request(String url, {data, method}) async {
     data = data ?? {};
@@ -45,7 +66,11 @@ class HttpUtils {
 
     try {
       Response response = await dio.request(url,
-          data: data, options: new Options(method: method));
+          data: data,
+          options: new Options(method: method), onSendProgress: (a, b) {
+        print(a);
+        print(b);
+      });
       result = response.data;
 
       // /// 打印响应相关信息
